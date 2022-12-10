@@ -153,3 +153,6 @@ target_include_directories(unit_tests PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(Catch)
 catch_discover_tests(unit_tests)
+
+add_executable(search_time search_time.cpp)
+target_link_libraries(search_time PUBLIC wdmcpl::wdmcpl)

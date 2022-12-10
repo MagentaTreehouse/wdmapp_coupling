@@ -164,6 +164,7 @@ TEST_CASE("uniform grid search") {
   auto mesh =
     Omega_h::build_box(world, OMEGA_H_SIMPLEX, 1, 1, 1, 10, 10, 0, false);
   GridPointSearch search{mesh,10,10};
+  /* command line arguments: name of mesh and uniform grid dimensions. */
   Kokkos::View<wdmcpl::Real*[2]> points("test_points", 5);
   //Kokkos::View<wdmcpl::Real*[2]> points("test_points", 1);
   auto points_h = Kokkos::create_mirror_view(points);
@@ -198,12 +199,12 @@ TEST_CASE("uniform grid search") {
       REQUIRE(coords[2] == Approx(0.4));
     }
   }
-  SECTION("Global coordinate outisde mesh", "[!mayfail]") {
-    auto out_of_bounds = results_h(2);
-    auto top_left = results_h(3);
-    REQUIRE(-1*out_of_bounds.tri_id == top_left.tri_id);
-    out_of_bounds = results_h(4);
-    auto bot_left = results_h(0);
-    REQUIRE(-1*out_of_bounds.tri_id == bot_left.tri_id);
-  }
+  // SECTION("Global coordinate outisde mesh", "[!mayfail]") {
+  //   auto out_of_bounds = results_h(2);
+  //   auto top_left = results_h(3);
+  //   REQUIRE(-1*out_of_bounds.tri_id == top_left.tri_id);
+  //   out_of_bounds = results_h(4);
+  //   auto bot_left = results_h(0);
+  //   REQUIRE(-1*out_of_bounds.tri_id == bot_left.tri_id);
+  // }
 }
