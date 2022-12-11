@@ -13,7 +13,7 @@
 argv[1]: mesh file name
 argv[2]: grid dim
 argv[3]: n_points = 256
-argv[4]: random_seed = 42
+argv[4]: rand_seed = 42
 */
 int main(int argc, char **argv) {
   Kokkos::initialize(argc, argv);
@@ -24,16 +24,16 @@ int main(int argc, char **argv) {
     if (argc < 3)
       std::exit(1);
     Omega_h::Library lib{};
-    int grid_dim{std::atoi(argv[2])};
     Omega_h::Mesh mesh{&lib};
     Omega_h::binary::read(argv[1], lib.world(), &mesh);
+    int grid_dim{std::atoi(argv[2])};
     auto n_points = argc < 4 ? default_n_points : std::atoi(argv[3]);
-    auto random_seed = argc < 5 ? default_rand_seed : std::atoi(argv[4]);
+    auto rand_seed = argc < 5 ? default_rand_seed : std::atoi(argv[4]);
 
     auto bbox = Omega_h::get_bounding_box<2>(&mesh);
-    std::mt19937 gen{random_seed};
-    std::uniform_real_distribution<> random_x{bbox.min[0], bbox.max[0]},
-                                    random_y{bbox.min[1], bbox.max[1]};
+    std::mt19937 gen{rand_seed};
+    std::uniform_real_distribution<>  random_x{bbox.min[0], bbox.max[0]},
+                                      random_y{bbox.min[1], bbox.max[1]};
     Kokkos::View<wdmcpl::Real *[2]> points("test_points", n_points);
     auto points_h = Kokkos::create_mirror_view(points);
     for (std::size_t i = 0; i < n_points; ++i) {
@@ -59,12 +59,13 @@ int main(int argc, char **argv) {
     // points copy to host end
     t[4] = steady_clock::now();
 
-    std::cout << "Timing done.\n";
+    // std::cout << "Timing done.\n";
     auto search_structure_construction_time = t[1] - t[0];
     auto points_copy_time = (t[2] - t[1]) + (t[4] - t[3]);
     auto search_time = t[3] - t[2];
 
-    std::cout << search_structure_construction_time.count() << '\n'
+    std::cout
+      << search_structure_construction_time.count() << '\n'
       << points_copy_time.count() << '\n'
       << search_time.count() << std::endl;
   }
